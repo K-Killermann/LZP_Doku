@@ -1,0 +1,178 @@
+Eisenach
+========
+Referent: Matthias Wolf
+Fläche: 57.000 m² 
+19.08.2022 Move der Thalia Prozesse -> Halle 6, 11.000 m² größer als Halle 4
+Inventur: Permanent-Inventur, Zykluszeit monatlich, physiche Zählung
+Tore: 12 (Ein- und Ausgang)
+
+IN
+	Konsolidierungs-Fahrt-Anlieferung-von-Hörselgau Rhenus-Sprinter {?RFID-Tag} [check?]
+	Lieferanten
+	EINLAGERUNG Paletten
+
+KOMMISSIONIERUNG
+	
+	Auftrag kann abgeleht werden
+	Aufträge können manuell vor-priorisiert werden
+	
+	WELLENBILDUNG (500 Pakete)
+
+		Notwendig?: ----------------
+			UMLAGERUNG (Ware muss auf Boden Kommissionierungs-bereit sein)
+				Chaotische Lagerhaltung
+				Mehrere Kommissionierungsplätze je Artikel
+					Kommissionierungsplätze = durch KOMMISIONIERER erreichbare Plätze (Palette-> Boden, Augenhöhe in Regal)
+				Sind alle Bodenplätze belegt: -> Kommissionierungsplätz mit Ältester Artikel-Pick wird eingelagert
+
+			>NEU< Konsolidierung (via Picking) Ab voraussichtlich 19.08.2022
+				Multi-Auftrag-Wanne-Hörselgau (bis zu 3 x Sprinter@Rhenus täglich) => Eisenach 
+					Eisenach -> Eingang [check: wie Waren-Eingang, scann?] -> Konsolidieruns-Koordinate
+					Konsolidieruns-Koordinate = Konsi-Lagerplatz
+						durch Nutzung des Konsi-Lagerplatzes als Fachboden, kann der Artikel von dort gepickt(=Kommisioniert, hier mit Suchen durch Foto-Unterstützung auf Hand-Held) werden		
+		------------
+
+		PRIO(B2C | B2B | XXL) -> Unique Auswahl je Welle
+			Pickingrouten-Planung
+			
+			PARALLEL:
+				Ist die Bestellte Menge nicht verfügbar
+					Wird die Verfügbare Menge verwendet 
+					Unvollständige Lieferung
+					Erzeugung eines Klärfalles {Potenzial: störanfälliger Prozess?}
+				
+				Aktuell(Einpöstler)
+					KOMMISSIONIERER legt - mehrere verschiedene Artickel - in Multi-Auftrag-Wanne-Eisenach 
+						ID-Kopplung: Scan (Artikel-Barcode, Wanne-Id) = Verheiratung(Artikel und Verpackung)
+						
+
+				Aktuell(Mehrpöstler)
+					KOMMISSIONIERER legt -  mehrere Artickel einer Bestellung in - einen Tray
+						Sodass sich ein Aufträg in einem Tray befindet
+						ID-Kopplung: Scan (Artikel-Barcode, Tray-Id) = Verheiratung(Artikel und Verpackung)
+
+			KONSOLIDERUNG nein (reine Spielwaren-Bestellung):
+				-> OUT
+				
+			KONSOLIDERUNG ja >ALT< (Hörselgau-Artikel + Einsenach-Artikel):
+				1200 Alte-Konsolidierungsplätze - sammelt (Scann Artikel + Koordinate) [check] Konsilagerplatz
+					Einsenach-Artikel
+					+ Hörselgau-Artikel
+					-> OUT
+				
+			KONSOLIDERUNG ja, >NEU< (Hörselgau-Artikel + Spielwaren-Bestellung):
+				Eine Multi-Auftrag-Wanne-Hörselgau -> Einen Fachboden
+				Integration in den Kommisionierungsprozess, indem die Wanne als Kommissionierplatz funktioniert
+				Tray mit Spielwaren bewegt sich mittels Rack zu den Konsoidierungsplätzen-Neu
+				Kommisionierer fährt eine automatisch berechnete Route, im Standart-Prozess der Welle
+				Kommisionierer scannt das Tray, darauf hin wird er auf Kommissionierplatz-Neu geführt und mit einem Foto auf seinem Hand-Held wird der/[check: die] richtige Artikel gezeigt
+				-> OUT					
+			
+		Alle Aufträge der Welle parken an den Packplätzen (Zukunft: Neue Packplätze s.u.)
+		
+	
+
+OUT (Kontinuierlich parallel zur Welle)
+	Verpacken+Labeln
+		B2B
+			OFFEN [check]
+
+		B2C Packplatz:
+			Alt: 14
+			Neu: 47 Packplätzen 
+				16 + 16 Packstrassen Normaler Versand 
+				7 XXL
+				8 Popup Reserve
+				
+			[check: Differenzierung der Marken + Geschenkverpackung]
+
+			Scann
+				Mehrpöstler
+					Tray (auf Rack) bewegt sich auf Koordinate-Packplatz
+					Scann der Tray-Id
+				
+				Einpöstler
+					Multi-Auftrag-Wanne-Eisenach (auf ? Lang-Ameise) bewegt sich auf Koordinate-Packplatz
+					1:1
+					Scann Wanne, zwecks Trennung der Wannen-Id und Artikel-Ids
+					Scann jedes Artikels
+				
+			
+			Versandart-Vorschlag durch Software
+			Verpackungsmitarbeiter - Entscheidung Versand-Verpackung  => [NEUES FEATURE MODELING] (Denny Heinrich) 
+				DHL
+					Paket 
+					XXL=Sperrgut 
+					Warenpost A klein < 3 cm
+					Warenpost B groß  >= 3 cm  
+				Deutsche-Post
+					Groß-Brief 
+			Verpackungsmitarbeiter scannt Verpackungs-Kartonagen-Id 
+
+			Versand-Label-Druck erfolgt		-		-		-		- {STATUS: "Versand-bereit"}
+xxxx-Bearbeitungsgrenze - David&Katharina&Kira&Felix - Ab hier weiter verfeinert von Felix
+			Informationsfluss: "Sendungsnummer + Versandart + Carrier" => Thalia  => Paqato [check: Ist das so implementiert? Wie?]
+			Verpackungsmitarbeiter - Verpackt Artikel
+				Einpöstler
+					1:1 = Trivial
+				Mehrpöstler
+					Auswahl der Artikel je Kunde erfolgt manuel, text-basiert und ohne Hilfe {Potenzial: Artikel-Fotos |oder| Computer-Vision -> Farbliche-Gruppensegmentierung}
+			Verpackungsmitarbeiter - klebt Versand-Label auf Sendung
+			Verpackungsmitarbeiter - sortiert Sendung in Gitter-Palette [? Fachwort für Post-Fahr-Käfig]
+
+	
+	Versand-Übergabe
+		[ckeck: Vermutungen:]
+				B2B Zeitfracht {? RFID-Tag}
+					Vorsortierung nach Zeitfracht-Depot [Narbe-Speiche]
+					Buchhandlung (Bestellung - Lieferung)
+					Abholer (=Endkunde holt in Buchhandlung ab)
+		[END: Vermutungen]
+	
+		B2C {Pirat-Abholung} 		-		-		-		- [check: {STATUS: "Versand-bereit"}]
+			DHL
+				Paket 
+				XXL=Sperrgut 
+				Warenpost A klein < 3 cm
+				Warenpost B groß  >= 3 cm  
+
+[check: Gibt es in Eisenach nicht!?:
+			Deutsche-Post
+				Groß-Brief 
+			Hermes
+				Paket
+]
+
+		B2B Zeitfracht {? RFID-Tag}
+			Vorsortierung nach Zeitfracht-Depot [Narbe-Speiche]
+			Buchhandlung (Bestellung - Lieferung)
+			Abholer (=Endkunde holt in Buchhandlung ab)
+				
+
+
+
+
+
+
+Glossary
+
+	RACK (Wagen - Trägt 24 TRAYs) fährt durch Lager  [check: anderer Wagen und #?]
+	Tray (blaue Kunststoff-Gitterbox) mit Mehreren Artikeln (Spiel oder und {konsolidiert} Buch)
+
+	RACK (24 Wannen - Regal-Staplertauglich)
+	Wanne (Elastische Polysterolschaum Box ohne Deckel)
+	Klärfall: Unvollständig realisierbarer Bestellprozess muss im Nachgang durch Nachlieferung geklärt werden {Potenzial: teuer}
+
+	Multi-Auftrag-Wanne-Hörselgau: Wird für die Konsolidierung in Eisenach benötigt. Es können mehrere Artikel pro Auftrag enthalten sein.
+	Multi-Auftrag-Wanne-Eisenach: Sammlung mehrer Einpöstler-Spielwaren-Aufträge
+	1200 Alte-Konsolidierungsplätze (Nur ein Auftrag in einem Fachboden) [Skaliert schlecht, da Personen kommissionierte Artikel an viele Ziele Tragen müssen]
+	BOL-OSI(ander)-Auftrag (Extra Plätze, andere Katonage + Versand-Label)
+	Kommissionierplatz Picking-Ort [Palette + Fachboden]
+	Fachboden (Hörselgau Artikellager - Eisenach Artikellager)
+	Lagerboden (Freimachen Kommissionierplatz-Palette -> Umgeräumt auf Fachboden) [check]
+
+
+---------------------
+
+
+RETOUREN
